@@ -44,14 +44,54 @@ router.post('/signup', async (req, res) => {
 // two login routes
 // get to render the login form
 router.get('/login', (req, res) => {
-    res.send('login page')
+    res.render('users/login')
 })
 // post to send the login info(and create a session)
-router.post('/login', (req, res) => {
-    res.send('login -> post')
+router.post('/login', async (req, res) => {
+    console.log('request object', req)
+    // get the data from the request body
+    const { username, password } = req.body
+    // then we search for the user
+    User.findOne({ username })
+        .then(async (user) => {
+            // check if the user exists
+            if (user) {
+                // compare the password
+                // bcrypt.compare evaluates to a truthy or a falsy value
+                const result = await bcrypt.compare(password, user.password)
+
+                if (result) {
+                    // then we'll need to use the session object
+                    // store some properties in the session
+                    req.session.username = username
+                    req.session.loggedIn = true
+                    // redirect to /fruits if login is successful
+                    res.redirect('/fruits')
+                } else {
+                    // send an error if the password doesnt match
+                    res.json({ error: 'username or password incorrect'})
+
+                }
+            } else {
+                // send an error if the user doesnt exist
+                res.json({ error: 'user does not exist' })
+            }
+        })
+        // catch any other errors that occur
+        .catch(error => {
+            console.log(error)
+            res.json(error)
+        })
 })
 
-// signout route -> destroy the session
+// logout route -> destroy the session
+router.get('/logout', (req, res) => {
+    // destroy the session and redirect to the main page
+    req.session.destroy(err => {
+        console.log('this is err in logout', err)
+        res.send('your session has been destroyed')
+    })
+})
 
 ////////////////////////////////////////////
 // Export the Router
