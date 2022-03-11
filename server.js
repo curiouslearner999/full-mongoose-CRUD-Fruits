@@ -10,6 +10,7 @@ const express = require('express')
 // we need to require our routers
 const FruitRouter = require('./controllers/fruit')
 const UserRouter = require('./controllers/user')
+const HomeRouter = require('./controllers/home')
 const middleware = require('./utils/middleware')
 
 ////////////////////////////////////////////
@@ -28,10 +29,12 @@ middleware(app)
 // send all '/fruits' routes to the Fruit Router
 app.use('/fruits', FruitRouter)
 app.use('/user', UserRouter)
+app.use('/', HomeRouter)
 
-app.get('/', (req, res) => {
-    res.send('your server is running, better go catch it')
-})
+// old home, now we're using homerouter
+// app.get('/', (req, res) => {
+//     res.send('your server is running, better go catch it')
+// })
 
 
 ////////////////////////////////////////////
