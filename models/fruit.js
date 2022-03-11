@@ -3,6 +3,12 @@
 /////////////////////////////////
 const mongoose = require('./connection')
 
+// we also need to import our commentSchema
+const commentSchema = require('./comment')
+
+// we'll import our user model so we can populate the info
+const User = require('./user')
+
 /////////////////////////////////
 // define our fruits model
 /////////////////////////////////
@@ -23,7 +29,8 @@ const fruitSchema = new Schema({
         // references the model: 'User'
         ref: 'User'
         // now that we have an owner field, let's look and replace references to the username in our fruit controllers
-    }
+    },
+    comments: [commentSchema]
 }, { timestamps: true })
 
 // make our fruit model
